@@ -1,0 +1,47 @@
+int main() {
+    // Initialize the speech recognition engine
+    ISpRecognizer* recognizer;
+    CoInitialize(NULL);
+    HRESULT hr = CoCreateInstance(CLSID_SpSharedRecognizer, NULL, CLSCTX_ALL, IID_ISpRecognizer, (void**)&recognizer);
+    if (FAILED(hr)) {
+        std::cerr << "Error initializing speech recognition." << std::endl;
+        return 1;
+    }
+    // Set the recognition language
+    hr = recognizer->SetRecognizer(NULL, L"en-US");
+    if (FAILED(hr)) {
+        std::cerr << "Error setting recognition language." << std::endl;
+        return 1;
+    }
+    // Create a grammar to recognize commands
+    ISpRecoGrammar* grammar;
+    hr = recognizer->CreateGrammar(0, &grammar);
+    if (FAILED(hr)) {
+        std::cerr << "Error creating recognition grammar." << std::endl;
+        return 1;
+    }
+    // Add commands to the grammar
+    SPPHRASE* phrases;
+    // Initialize the phrases array with the voice commands to recognize
+    // ...
+    hr = grammar->LoadCmdFromMemory(phrases, sizeof(SPPHRASE) * num_phrases);
+    if (FAILED(hr)) {
+        std::cerr << "Error loading recognition grammar." << std::endl;
+        return 1;
+    }
+    // Enable the grammar
+    hr = grammar->SetRuleState(NULL, NULL, SPRS_ACTIVE);
+    if (FAILED(hr)) {
+        std::cerr << "Error enabling recognition grammar." << std::endl;
+        return 1;
+    }
+    // Initialize the speech recognition engine
+    ISpRecoContext* context;
+    hr = recognizer->CreateRecoContext(&context);
+    if (FAILED(hr)) {
+        std::cerr << "Error creating recognition context." << std::endl;
+        return 1;
+    }
+    // Set the recognition event handler
+    HANDLE event_handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+    hr = context->
